@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.departmentmanagement.dao.MemberDao">
+<!--    <resultMap id="id" type="mbr_id">-->
+<!--        <result property="username" column="mbr_nm"/>-->
+<!--        <result property="password" column="pswd"/>-->
+<!--        <result property="departmentName" column="dept_nm"/>-->
+<!--        <result property="clockIn" column="clock_in"/>-->
+<!--        <result property="clockOut" column="clock_out"/>-->
+<!--        <result property="timekepping" column="timekepping"/>-->
+<!--    </resultMap>-->
+    
+
+
+<select id="allMember" resultType="com.example.departmentmanagement.dto.MemberDTO">
+    SELECT * FROM sql_db.mbr
+</select>
+
+    <update id="updateMember">
+        UPDATE sql_db.mbr
+        SET
+            dept_nm
+        WHERE mbr_id = #{username}
+            RETURNING *
+    </update>
+
+
+
+</mapper>
