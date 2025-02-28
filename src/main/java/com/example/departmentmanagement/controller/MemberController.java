@@ -4,9 +4,9 @@ package com.example.departmentmanagement.controller;
 import com.example.departmentmanagement.dto.MemberDTO;
 import com.example.departmentmanagement.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +31,21 @@ public class MemberController {
         List<MemberDTO> list = memberService.allMember();
 
         return list;
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody MemberDTO memberDTO) {
+        MemberDTO user = memberService.login(memberDTO.getId(), memberDTO.getPassword());
+
+        if (user != null) {
+            // 비밀번호는 보안을 위해서 응답에서 제외
+            user.setPassword(null);
+            return ResponseEntity.ok().body(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
     }
 
     

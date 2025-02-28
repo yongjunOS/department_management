@@ -20,6 +20,9 @@ public class MemberService {
       return memberDao.allMember();
   }
 
+    public MemberDTO login(String id, String password){
+        return memberDao.findByIdAndPassword(id, password);
+    }
 
 
 }

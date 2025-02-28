@@ -25,6 +25,10 @@
             RETURNING *
     </update>
 
+    <select id="findByIdAndPassword" resultType="com.example.departmentmanagement.dto.MemberDTO">
+        SELECT * FROM sql_db.mbr
+        WHERE mbr_id = #{id} AND pswd = #{password}
+    </select>
 
 
 </mapper>
