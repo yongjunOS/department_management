@@ -48,8 +48,12 @@ public class MemberController {
         }
     }
 
-    
-
+    @GetMapping("/selectAll")
+    public List<MemberDTO> selectAll() {
+        //회원목록을 조회하여 반환한다.
+        List<MemberDTO> list = memberService.allMember();
+        return list;
+    }
 
 
 
