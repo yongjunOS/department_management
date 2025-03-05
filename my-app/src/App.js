@@ -7,16 +7,12 @@ import Admin from "./components/Admin";
 const App = () => {
   return (
     <Router>
-              
       <div className="app">
-                
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/admin" component={<Admin />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
-                
       </div>
-          
     </Router>
   );
 };
