@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 const Login = () => {
 	const [id, setId] = useState('');
 	const [password, setPassword] = useState('');
+	const [authorityId, setAuthorityid] = useState('');
 	const navigate = useNavigate();
 
 	const handleSubmit = async (event) => {
@@ -18,7 +19,8 @@ const Login = () => {
 			});
 
 			if (response.status === 200) {
-				if (response.data === '1') {
+				console.log("가져오데이터", response)
+				if (response.data.authorityId === '1') {
 					sessionStorage.setItem('id', id);
 					alert('관리자 페이지로 이동합니다.')
 					navigate('/admin'); // admin.js로 이동			
