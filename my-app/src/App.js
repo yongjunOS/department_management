@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./member/Login";
+import Admin from "./components/Admin";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
                 
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/admin" component={<Admin />} />
         </Routes>
                 
       </div>
