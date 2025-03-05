@@ -17,4 +17,5 @@ public interface MemberDao {
     MemberDTO findByIdAndPassword(String id, String password);
 
 
+
 }
