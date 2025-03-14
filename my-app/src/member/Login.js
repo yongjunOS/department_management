@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 const Login = () => {
 	const [id, setId] = useState('');
 	const [password, setPassword] = useState('');
-	const [authorityId, setAuthorityid] = useState('');
 	const navigate = useNavigate();
 
 	const handleSubmit = async (event) => {
@@ -72,13 +71,6 @@ const Login = () => {
 				</div>
 
 				<button type="submit" style={{ padding: '10px', width: '330px', marginBottom: '10px' }}>로그인</button>
-
-				<div className="additional-links" style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-					<Link to="/join" style={{ textDecoration: 'none' }}>회원 가입</Link>|
-					<Link to="/findId" style={{ textDecoration: 'none' }}>아이디 찾기</Link>|
-					<Link to="/findPw" style={{ textDecoration: 'none' }}>비밀번호 찾기</Link>
-				</div>
-
 			</form>
 		</div>
 	);

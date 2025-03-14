@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./member/Login";
@@ -7,16 +7,10 @@ import Admin from "./components/Admin";
 const App = () => {
   return (
     <Router>
-              
-      <div className="app">
-                
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/admin" component={<Admin />} />
-        </Routes>
-                
-      </div>
-          
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
     </Router>
   );
 };
