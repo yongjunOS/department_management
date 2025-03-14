@@ -16,6 +16,9 @@ public interface MemberDao {
     List<MemberDTO> allMember();
     MemberDTO findByIdAndPassword(String id, String password);
 
+    // 직원 등록 메서드 추가
+    int registerMember(MemberDTO memberDTO);
+
 
 
 }

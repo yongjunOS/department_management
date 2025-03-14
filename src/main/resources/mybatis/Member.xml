@@ -30,5 +30,22 @@
         WHERE mbr_id = #{id} AND pswd = #{password}
     </select>
 
+    <!-- 직원 등록 쿼리 수정 - 실제 DB 컬럼명에 맞게 수정 -->
+    <insert id="registerMember" parameterType="com.example.departmentmanagement.dto.MemberDTO">
+        INSERT INTO sql_db.mbr (
+            mbr_id,
+            authrt_id,
+            mbr_nm,
+            pswd,
+            dept_nm
+        ) VALUES (
+                     #{id},
+                     #{authorityId},
+                     #{username},
+                     #{password},
+                     #{departmentName}
+                 )
+    </insert>
+
 
 </mapper>

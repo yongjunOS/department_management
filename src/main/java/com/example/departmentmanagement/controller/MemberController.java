@@ -55,8 +55,29 @@ public class MemberController {
         return list;
     }
 
+    // 직원 등록 API 추가
+    @PostMapping("/register")
+    public ResponseEntity<?> registerMember(@RequestBody MemberDTO memberDTO) {
+        try {
+            boolean result = memberService.registerMember(memberDTO);
+            if (result) {
+                return ResponseEntity.ok().body("직원이 성공적으로 등록되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("직원 등록에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("직원 등록 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 
+    //관리자가 직원수정 메서드 update
+
+    //관리자가 직원수정 메서드 delete
 
 
 
 }
+
+

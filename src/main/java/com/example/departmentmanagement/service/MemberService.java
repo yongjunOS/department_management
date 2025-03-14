@@ -24,5 +24,10 @@ public class MemberService {
         return memberDao.findByIdAndPassword(id, password);
     }
 
+    // 직원 등록 메서드 추가
+    public boolean registerMember(MemberDTO memberDTO){
+        return memberDao.registerMember(memberDTO) > 0;
+    }
+
 
 }
