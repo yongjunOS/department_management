@@ -18,7 +18,7 @@ const Login = () => {
 			});
 
 			if (response.status === 200) {
-				console.log("가져오데이터", response)
+				console.log("로그인계정정보", response)
 				if (response.data.authorityId === '1') {
 					sessionStorage.setItem('id', id);
 					alert('관리자 페이지로 이동합니다.')
