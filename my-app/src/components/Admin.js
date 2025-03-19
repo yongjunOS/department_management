@@ -11,10 +11,11 @@ const Admin = () => {
   //직원등록 상태변수
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [newEmployee, setNewEmployee] = useState({
-
     authorityId: "2",
-  
   });
+
+  //직원 삭제를 위한 상태변수
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   //컴포넌트가 처음 마운트될때 직원 목록을 로드하는 useEffect 훅을 선언한다
   useEffect(() => {
@@ -33,7 +34,7 @@ const Admin = () => {
       setLoading(true);
       const response = await axios.get("http://localhost:8080/selectAll");
       setEmployees(response.data);
-      console.log('서버에서가져온직원목록', response.data)
+      console.log("서버에서가져온직원목록", response.data);
     } catch (e) {
       setError(e);
     }
@@ -77,6 +78,33 @@ const Admin = () => {
       alert("직원 등록 실패: " + (error.response?.data || error.message));
     }
   };
+
+  //직원 삭제 확인 핸들러
+  const handleDeleteConfirm = (id) => {
+    setDeleteConfirmId(id);
+  }
+
+    // 직원 삭제 실행 핸들러
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/delete/${id}`);
+      alert("직원이 성공적으로 삭제되었습니다.");
+      // 직원 목록 다시 불러오기
+      fetchEmployees();
+    } catch (error) {
+      alert("직원 삭제 실패: " + (error.response?.data || error.message));
+    } finally {
+      // 확인 상태 초기화
+      setDeleteConfirmId(null);
+    }
+  };
+
+  // 삭제 취소 핸들러
+  const handleCancelDelete = () => {
+    setDeleteConfirmId(null);
+  };
+
+
 
   return (
     <div>
@@ -224,7 +252,7 @@ const Admin = () => {
         </thead>
         <tbody>
           {employees.map((employee) => {
-            console.log("직원map형태", employee)
+            console.log("직원map형태", employee);
             return (
               <tr key={employee.id}>
                 <td>{employee.id}</td>
@@ -232,6 +260,32 @@ const Admin = () => {
                 <td>{employee.departmentName}</td>
                 <td>{employee.timekepping}</td>
                 <td>{employee.clockIn}</td>
+                <td>
+                {deleteConfirmId === employee.id ? (
+                  <div>
+                    <span style={{ color: 'red', marginRight: '10px' }}>정말 삭제하시겠습니까?</span>
+                    <button
+                      onClick={() => handleDelete(employee.id)}
+                  
+                    >
+                      예
+                    </button>
+                    <button
+                      onClick={handleCancelDelete}
+                     
+                    >
+                      아니오
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleDeleteConfirm(employee.id)}
+                  
+                  >
+                    삭제
+                  </button>
+                )}
+              </td>
               </tr>
             );
           })}
@@ -239,7 +293,6 @@ const Admin = () => {
       </table>
     </div>
   );
-
 };
 
 export default Admin;
