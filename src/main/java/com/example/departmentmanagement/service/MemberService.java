@@ -29,5 +29,8 @@ public class MemberService {
         return memberDao.registerMember(memberDTO) > 0;
     }
 
-
+    //직원 삭제 메서드 추가
+    public boolean deleteMember(String id){
+     return memberDao.deleteMember(id) > 0;
+    }
 }

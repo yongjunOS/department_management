@@ -74,7 +74,24 @@ public class MemberController {
 
     //관리자가 직원수정 메서드 update
 
-    //관리자가 직원수정 메서드 delete
+
+    //직원 삭제  delete
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteMember(@PathVariable String id) {
+        try {
+            boolean result = memberService.deleteMember(id);
+            if (result) {
+                return ResponseEntity.ok().body("직원이 성공적으로 삭제되었습니다");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("해당 id의 직원을 찾을 수 없습니다");
+            }
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("직원 삭제중 오류가 발생했습니다" +e.getMessage());
+        }
+    }
 
 
 

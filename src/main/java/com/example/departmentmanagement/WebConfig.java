@@ -8,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*"); //모든 경로 모든 곳에서 접속 가능하게 설정
+        registry.addMapping("/**")
+                .allowedOrigins("*") //모든 경로 모든 곳에서 접속 가능하게 설정
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }

@@ -47,5 +47,11 @@
                  )
     </insert>
 
+    <delete id="deleteMember" parameterType="string">
+    DELETE FROM sql_db.mbr
+    WHERE mbr_id = #{id}
+    </delete>
+
+
 
 </mapper>
