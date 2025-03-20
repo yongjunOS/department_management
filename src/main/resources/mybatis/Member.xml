@@ -17,14 +17,6 @@
     SELECT * FROM sql_db.mbr
 </select>
 
-    <update id="updateMember">
-        UPDATE sql_db.mbr
-        SET
-            dept_nm
-        WHERE mbr_id = #{username}
-            RETURNING *
-    </update>
-
     <select id="findByIdAndPassword" resultType="com.example.departmentmanagement.dto.MemberDTO">
         SELECT * FROM sql_db.mbr
         WHERE mbr_id = #{id} AND pswd = #{password}
@@ -46,6 +38,19 @@
                      #{departmentName}
                  )
     </insert>
+
+    <!-- 직원 정보 수정 쿼리 -->
+    <update id="updateMember" parameterType="com.example.departmentmanagement.dto.MemberDTO">
+        UPDATE sql_db.mbr
+        SET
+        mbr_nm = #{username},
+        authrt_id = #{authorityId},
+        dept_nm = #{departmentName}
+        <if test="password != null and password != ''">
+             ,pswd = #{password}
+        </if>
+        WHERE mbr_id = #{id}
+    </update>
 
     <delete id="deleteMember" parameterType="string">
     DELETE FROM sql_db.mbr

@@ -72,7 +72,22 @@ public class MemberController {
         }
     }
 
-    //관리자가 직원수정 메서드 update
+    // 직원 정보 수정 API
+    @PutMapping("/update")
+    public ResponseEntity<?> updateMember(@RequestBody MemberDTO memberDTO) {
+        try {
+            boolean result = memberService.updateMember(memberDTO);
+            if (result) {
+                return ResponseEntity.ok().body("직원 정보가 성공적으로 수정되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("해당 ID의 직원을 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("직원 정보 수정 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 
 
     //직원 삭제  delete
