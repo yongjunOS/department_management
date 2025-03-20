@@ -5,6 +5,9 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
+import Navbar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+
 
 const Admin = () => {
   //상태변수를 정의
@@ -30,6 +33,15 @@ const Admin = () => {
     password: "",
     departmentName: "",
   });
+
+  // Admin 컴포넌트 내부에서 이 함수 추가
+  const handleLogout = () => {
+    // 세션 스토리지에서 사용자 정보 삭제
+    sessionStorage.removeItem("id");
+    alert("로그아웃 되었습니다.");
+    // 로그인 페이지로 리다이렉트
+    navigate("/");
+  };
 
   //컴포넌트가 처음 마운트될때 직원 목록을 로드하는 useEffect 훅을 선언한다
   useEffect(() => {
@@ -170,6 +182,21 @@ const Admin = () => {
 
   return (
     <div>
+      {/* Admin 컴포넌트 return 문 최상단에 추가 */}
+      <Navbar bg="dark" variant="dark" className="mb-4">
+        <Container>
+          <Navbar.Brand><h1>관리자페이지</h1></Navbar.Brand>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            <Navbar.Text className="me-2">
+              <strong>{sessionStorage.getItem("id")}</strong>님 로그인 중
+            </Navbar.Text>
+            <Button variant="outline-light" onClick={handleLogout}>
+              로그아웃
+            </Button>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
       {/* 직원 등록 버튼 */}
       <Button
         variant={showRegistrationForm ? "danger" : "success"}
@@ -178,7 +205,6 @@ const Admin = () => {
       >
         {showRegistrationForm ? "취소" : "직원 등록"}
       </Button>
-
       {/* 직원 등록 폼 */}
       {showRegistrationForm && (
         <Card className="mb-4">
@@ -251,7 +277,6 @@ const Admin = () => {
           </Card.Body>
         </Card>
       )}
-
       {/* 직원 수정 폼 */}
       {editMode && (
         <Card className="mb-4">
@@ -327,7 +352,6 @@ const Admin = () => {
           </Card.Body>
         </Card>
       )}
-
       <h1>직원관리 시스템</h1>
       <Table striped bordered hover>
         <thead>
