@@ -1,6 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
 
 const Admin = () => {
   //상태변수를 정의
@@ -26,7 +30,6 @@ const Admin = () => {
     password: "",
     departmentName: "",
   });
-
 
   //컴포넌트가 처음 마운트될때 직원 목록을 로드하는 useEffect 훅을 선언한다
   useEffect(() => {
@@ -65,15 +68,14 @@ const Admin = () => {
     }));
   };
 
-   // 직원 수정 폼 입력 핸들러
-   const handleEditChange = (e) => {
+  // 직원 수정 폼 입력 핸들러
+  const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditEmployee((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
 
   // 직원 등록 폼 제출 핸들러
   const handleSubmit = async (e) => {
@@ -100,8 +102,8 @@ const Admin = () => {
     }
   };
 
-   // 수정 모드 활성화 핸들러
-   const handleEditMode = (employee) => {
+  // 수정 모드 활성화 핸들러
+  const handleEditMode = (employee) => {
     setEditMode(true);
     setEditEmployee({
       id: employee.id,
@@ -144,9 +146,9 @@ const Admin = () => {
   //직원 삭제 확인 핸들러
   const handleDeleteConfirm = (id) => {
     setDeleteConfirmId(id);
-  }
+  };
 
-    // 직원 삭제 실행 핸들러
+  // 직원 삭제 실행 핸들러
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`http://localhost:8080/delete/${id}`);
@@ -166,213 +168,177 @@ const Admin = () => {
     setDeleteConfirmId(null);
   };
 
-
-
   return (
     <div>
       {/* 직원 등록 버튼 */}
-      <button
+      <Button
+        variant={showRegistrationForm ? "danger" : "success"}
         onClick={() => setShowRegistrationForm(!showRegistrationForm)}
-        style={{
-          padding: "10px 15px",
-          backgroundColor: showRegistrationForm ? "#f44336" : "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          marginBottom: "20px",
-        }}
+        className="mb-3"
       >
         {showRegistrationForm ? "취소" : "직원 등록"}
-      </button>
-
+      </Button>
 
       {/* 직원 등록 폼 */}
       {showRegistrationForm && (
-        <div
-          style={{
-            border: "1px solid #ddd",
-            padding: "20px",
-            borderRadius: "5px",
-            marginBottom: "20px",
-          }}
-        >
-          <h1 style={{ marginBottom: "15px" }}>새 직원 등록</h1>
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                ID:
-              </label>
-              <input
-                type="text"
-                name="id"
-                value={newEmployee.id}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                권한:
-              </label>
-              <select
-                name="authorityId"
-                value={newEmployee.authorityId}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  boxSizing: "border-box",
-                }}
-              >
-                <option value="1">관리자</option>
-                <option value="2">일반 직원</option>
-              </select>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                이름:
-              </label>
-              <input
-                type="text"
-                name="username"
-                value={newEmployee.username}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                비밀번호:
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={newEmployee.password}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                부서:
-              </label>
-              <input
-                type="text"
-                name="departmentName"
-                value={newEmployee.departmentName}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-            <button
-              type="submit"
-              style={{
-                padding: "10px 15px",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              등록하기
-            </button>
-          </form>
-        </div>
+        <Card className="mb-4">
+          <Card.Header>
+            <h3>새 직원 등록</h3>
+          </Card.Header>
+          <Card.Body>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>ID:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="id"
+                  value={newEmployee.id}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>권한:</Form.Label>
+                <Form.Select
+                  name="authorityId"
+                  value={newEmployee.authorityId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="1">관리자</option>
+                  <option value="2">일반 직원</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>이름:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  value={newEmployee.username}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>비밀번호:</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={newEmployee.password}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>부서:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="departmentName"
+                  value={newEmployee.departmentName}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Button variant="primary" type="submit">
+                등록하기
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
       )}
 
-         {/* 직원 수정 폼 */}
-         {editMode && (
-        <div>
-          <h2>직원 정보 수정</h2>
-          <form onSubmit={handleEditSubmit}>
-            <div>
-              <label>ID:</label>
-              <input
-                type="text"
-                name="id"
-                value={editEmployee.id}
-                readOnly
-              />
-            </div>
-            <div>
-              <label>권한:</label>
-              <select
-                name="authorityId"
-                value={editEmployee.authorityId}
-                onChange={handleEditChange}
-                required
-              >
-                <option value="1">관리자</option>
-                <option value="2">일반 직원</option>
-              </select>
-            </div>
-            <div>
-              <label>이름:</label>
-              <input
-                type="text"
-                name="username"
-                value={editEmployee.username}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <div>
-              <label>비밀번호 (변경하지 않으려면 빈칸으로 두세요):</label>
-              <input
-                type="password"
-                name="password"
-                value={editEmployee.password}
-                onChange={handleEditChange}
-              />
-            </div>
-            <div>
-              <label>부서:</label>
-              <input
-                type="text"
-                name="departmentName"
-                value={editEmployee.departmentName}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <button type="submit">저장하기</button>
-            <button type="button" onClick={handleCancelEdit}>취소하기</button>
-          </form>
-        </div>
+      {/* 직원 수정 폼 */}
+      {editMode && (
+        <Card className="mb-4">
+          <Card.Header>
+            <h2>직원 정보 수정</h2>
+          </Card.Header>
+          <Card.Body>
+            <form onSubmit={handleEditSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>ID:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="id"
+                  value={editEmployee.id}
+                  readOnly
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>권한:</Form.Label>
+                <Form.Select
+                  name="authorityId"
+                  value={editEmployee.authorityId}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="1">관리자</option>
+                  <option value="2">일반 직원</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>이름:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  value={editEmployee.username}
+                  onChange={handleEditChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  비밀번호 (변경하지 않으려면 빈칸으로 두세요):
+                </Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={editEmployee.password}
+                  onChange={handleEditChange}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>부서:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="departmentName"
+                  value={editEmployee.departmentName}
+                  onChange={handleEditChange}
+                  required
+                />
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="me-2">
+                저장하기
+              </Button>
+              <Button variant="secondary" onClick={handleCancelEdit}>
+                취소하기
+              </Button>
+            </form>
+          </Card.Body>
+        </Card>
       )}
 
       <h1>직원관리 시스템</h1>
-      <table border="1">
+      <Table striped bordered hover>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Username</th>
-            <th>Department</th>
-            <th>Timekeeping</th>
-            <th>Clock In</th>
+            <th>이름</th>
+            <th>권한</th>
+            <th>부서</th>
+            <th>근태상태</th>
+            <th>출근시간</th>
+            <th>작업</th>
           </tr>
         </thead>
         <tbody>
@@ -382,41 +348,55 @@ const Admin = () => {
               <tr key={employee.id}>
                 <td>{employee.id}</td>
                 <td>{employee.username}</td>
+                <td>{employee.authorityId === "1" ? "관리자" : "일반직원"}</td>
                 <td>{employee.departmentName}</td>
                 <td>{employee.timekepping}</td>
                 <td>{employee.clockIn}</td>
                 <td>
-                <button onClick={() => handleEditMode(employee)}>수정</button>
-                {deleteConfirmId === employee.id ? (
-                  <div>
-                    <span style={{ color: 'red', marginRight: '10px' }}>정말 삭제하시겠습니까?</span>
-                    <button
-                      onClick={() => handleDelete(employee.id)}
-                  
-                    >
-                      예
-                    </button>
-                    <button
-                      onClick={handleCancelDelete}
-                     
-                    >
-                      아니오
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleDeleteConfirm(employee.id)}
-                  
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => handleEditMode(employee)}
                   >
-                    삭제
-                  </button>
-                )}
-              </td>
+                    수정
+                  </Button>
+                  {deleteConfirmId === employee.id ? (
+                    <div>
+                      <span style={{ color: "red", marginRight: "10px" }}>
+                        정말 삭제하시겠습니까?
+                      </span>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleDelete(employee.id)}
+                      >
+                        예
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleCancelDelete}
+                      >
+                        아니오
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDeleteConfirm(employee.id)}
+                    >
+                      삭제
+                    </Button>
+                  )}
+                </td>
               </tr>
             );
           })}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };
