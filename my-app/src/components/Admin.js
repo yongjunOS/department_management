@@ -17,6 +17,17 @@ const Admin = () => {
   //직원 삭제를 위한 상태변수
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
+  // 수정 상태 변수
+  const [editMode, setEditMode] = useState(false);
+  const [editEmployee, setEditEmployee] = useState({
+    id: "",
+    authorityId: "",
+    username: "",
+    password: "",
+    departmentName: "",
+  });
+
+
   //컴포넌트가 처음 마운트될때 직원 목록을 로드하는 useEffect 훅을 선언한다
   useEffect(() => {
     const id = sessionStorage.getItem("id");
@@ -54,6 +65,16 @@ const Admin = () => {
     }));
   };
 
+   // 직원 수정 폼 입력 핸들러
+   const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditEmployee((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+
   // 직원 등록 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,6 +97,47 @@ const Admin = () => {
       fetchEmployees();
     } catch (error) {
       alert("직원 등록 실패: " + (error.response?.data || error.message));
+    }
+  };
+
+   // 수정 모드 활성화 핸들러
+   const handleEditMode = (employee) => {
+    setEditMode(true);
+    setEditEmployee({
+      id: employee.id,
+      authorityId: employee.authorityId || "2",
+      username: employee.username || "",
+      password: "", // 수정 시 비밀번호는 빈 값으로 시작
+      departmentName: employee.departmentName || "",
+    });
+  };
+
+  // 수정 취소 핸들러
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setEditEmployee({
+      id: "",
+      authorityId: "",
+      username: "",
+      password: "",
+      departmentName: "",
+    });
+  };
+
+  // 직원 수정 폼 제출 핸들러
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        "http://localhost:8080/update",
+        editEmployee
+      );
+      alert("직원 정보가 성공적으로 수정되었습니다.");
+      setEditMode(false);
+      // 직원 목록 다시 불러오기
+      fetchEmployees();
+    } catch (error) {
+      alert("직원 정보 수정 실패: " + (error.response?.data || error.message));
     }
   };
 
@@ -123,6 +185,8 @@ const Admin = () => {
       >
         {showRegistrationForm ? "취소" : "직원 등록"}
       </button>
+
+
       {/* 직원 등록 폼 */}
       {showRegistrationForm && (
         <div
@@ -239,6 +303,67 @@ const Admin = () => {
         </div>
       )}
 
+         {/* 직원 수정 폼 */}
+         {editMode && (
+        <div>
+          <h2>직원 정보 수정</h2>
+          <form onSubmit={handleEditSubmit}>
+            <div>
+              <label>ID:</label>
+              <input
+                type="text"
+                name="id"
+                value={editEmployee.id}
+                readOnly
+              />
+            </div>
+            <div>
+              <label>권한:</label>
+              <select
+                name="authorityId"
+                value={editEmployee.authorityId}
+                onChange={handleEditChange}
+                required
+              >
+                <option value="1">관리자</option>
+                <option value="2">일반 직원</option>
+              </select>
+            </div>
+            <div>
+              <label>이름:</label>
+              <input
+                type="text"
+                name="username"
+                value={editEmployee.username}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div>
+              <label>비밀번호 (변경하지 않으려면 빈칸으로 두세요):</label>
+              <input
+                type="password"
+                name="password"
+                value={editEmployee.password}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div>
+              <label>부서:</label>
+              <input
+                type="text"
+                name="departmentName"
+                value={editEmployee.departmentName}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <button type="submit">저장하기</button>
+            <button type="button" onClick={handleCancelEdit}>취소하기</button>
+          </form>
+        </div>
+      )}
+
       <h1>직원관리 시스템</h1>
       <table border="1">
         <thead>
@@ -261,6 +386,7 @@ const Admin = () => {
                 <td>{employee.timekepping}</td>
                 <td>{employee.clockIn}</td>
                 <td>
+                <button onClick={() => handleEditMode(employee)}>수정</button>
                 {deleteConfirmId === employee.id ? (
                   <div>
                     <span style={{ color: 'red', marginRight: '10px' }}>정말 삭제하시겠습니까?</span>
