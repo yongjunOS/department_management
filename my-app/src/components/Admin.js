@@ -5,9 +5,8 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import Navbar from 'react-bootstrap/Navbar';
-import Container from 'react-bootstrap/Container';
-
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
 
 const Admin = () => {
   //상태변수를 정의
@@ -97,6 +96,7 @@ const Admin = () => {
         "http://localhost:8080/register",
         newEmployee
       );
+
       alert("직원이 성공적으로 등록되었습니다.");
       // 폼 초기화
       setNewEmployee({
@@ -183,9 +183,11 @@ const Admin = () => {
   return (
     <div>
       {/* Admin 컴포넌트 return 문 최상단에 추가 */}
-      <Navbar bg="dark" variant="dark" className="mb-4">
-        <Container>
-          <Navbar.Brand><h1>관리자페이지</h1></Navbar.Brand>
+      <Navbar bg="dark" variant="dark" className="mb-1 px-0">
+        <Container fluid className="px-5">
+          <Navbar.Brand className="ms-0 ps-2">
+            <h1>직원관리 페이지</h1>
+          </Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="me-2">
@@ -352,7 +354,7 @@ const Admin = () => {
           </Card.Body>
         </Card>
       )}
-      <h1>직원관리 시스템</h1>
+    
       <Table striped bordered hover>
         <thead>
           <tr>

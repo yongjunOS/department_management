@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate} from 'react-router-dom';
+import Button from "react-bootstrap/Button";
 
 const Login = () => {
 	const [id, setId] = useState('');
@@ -70,7 +71,7 @@ const Login = () => {
 					/>
 				</div>
 
-				<button type="submit" style={{ padding: '10px', width: '330px', marginBottom: '10px' }}>로그인</button>
+				<Button type="submit" style={{ padding: '10px', width: '330px', marginBottom: '10px' }}>로그인</Button>
 			</form>
 		</div>
 	);
