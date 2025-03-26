@@ -10,9 +10,6 @@ import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal"; // 모달 컴포넌트 추가
 import swal from "sweetalert";
 
-
-
-
 const Admin = () => {
   //상태변수를 정의
   const [employees, setEmployees] = useState([]);
@@ -21,7 +18,7 @@ const Admin = () => {
   const navigate = useNavigate();
   // 기존 직원등록 상태변수
   // const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-  
+
   // 모달 직원등록 상태변수
   const [showModal, setShowModal] = useState(false);
 
@@ -96,12 +93,14 @@ const Admin = () => {
   useEffect(() => {
     fetchEmployees();
   }, []);
+
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewEmployee((prev) => ({
       // 올바른 상태 업데이트 함수
       ...prev,
-      [name]: value,
+      [name]: value,  // "name" 속성을 사용하여 어떤 상태 속성을 업데이트할지 결정
     }));
   };
 
@@ -241,23 +240,61 @@ const Admin = () => {
     }
   };
 
-  //직원 삭제 확인 핸들러
-  const handleDeleteConfirm = (id) => {
-    setDeleteConfirmId(id);
+  // //이전 직원 삭제 확인 핸들러
+  // const handleDeleteConfirm = (id) => {
+  //   setDeleteConfirmId(id);
+  // };
+
+  // 직원 삭제 확인 및 실행 핸들러 (swal 사용)
+  const handleDeleteConfirm = (id, username) => {
+    // 디버깅을 위해 username 값 확인
+    console.log("삭제할 직원 정보:", id, username);
+    swal({
+      title: "직원 삭제",
+      text: `"${username}" 직원을 정말 삭제하시겠습니까?`,
+      icon: "warning",
+      buttons: ["취소", "삭제"],
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        handleDelete(id);
+      }
+    });
   };
 
-  // 직원 삭제 실행 핸들러
+  // // 이전 직원 삭제 실행 핸들러
+  // const handleDelete = async (id) => {
+  //   try {
+  //     const response = await axios.delete(`http://localhost:8080/delete/${id}`);
+  //     swal("직원이 성공적으로 삭제되었습니다.");
+  //     // 직원 목록 다시 불러오기
+  //     fetchEmployees();
+  //   } catch (error) {
+  //     swal("직원 삭제 실패: " + (error.response?.data || error.message));
+  //   } finally {
+  //     // 확인 상태 초기화
+  //     setDeleteConfirmId(null);
+  //   }
+  // };
+
+  // swal 적용 직원 삭제 실행 핸들러
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`http://localhost:8080/delete/${id}`);
-      swal("직원이 성공적으로 삭제되었습니다.");
+      swal({
+        title: "삭제 완료!",
+        text: "직원이 성공적으로 삭제되었습니다.",
+        icon: "success",
+        timer: 2000,
+      });
       // 직원 목록 다시 불러오기
       fetchEmployees();
     } catch (error) {
-      swal("직원 삭제 실패: " + (error.response?.data || error.message));
-    } finally {
-      // 확인 상태 초기화
-      setDeleteConfirmId(null);
+      swal({
+        title: "삭제 실패!",
+        text: "직원 삭제 실패: " + (error.response?.data || error.message),
+        icon: "error",
+      });
     }
   };
 
@@ -435,6 +472,7 @@ const Admin = () => {
                 required
               />
             </Form.Group>
+            
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -665,7 +703,9 @@ const Admin = () => {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDeleteConfirm(employee.id)}
+                      onClick={() =>
+                        handleDeleteConfirm(employee.id, employee.username)
+                      }
                     >
                       삭제
                     </Button>
