@@ -5,10 +5,13 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card"; // Card대신 Modal 사용
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar"; // Navbar대신에 sidebar로 사용
+import Container from "react-bootstrap/Container"; // Navbar대신에 sidebar로 사용
 import Modal from "react-bootstrap/Modal"; // 모달 컴포넌트 추가
 import swal from "sweetalert";
+import Sidebar from "./Sidebar";
+import Pagination from "react-bootstrap/Pagination";
+import "./pagination.css";
 
 const Admin = () => {
   //상태변수를 정의
@@ -18,6 +21,8 @@ const Admin = () => {
   const navigate = useNavigate();
   // 기존 직원등록 상태변수
   // const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+
+  const [activeSection, setActiveSection] = useState("employees"); // 기본 활성 섹션
 
   // 모달 직원등록 상태변수
   const [showModal, setShowModal] = useState(false);
@@ -42,6 +47,10 @@ const Admin = () => {
   // 모달 직원수정 상태변수
   const [showEditModal, setShowEditModal] = useState(false);
 
+  //페이징네이션 상태변수
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(2); // 페이지당 표시할 항목 수
+
   // Admin 컴포넌트 내부에서 이 함수 추가
   const handleLogout = () => {
     // 세션 스토리지에서 사용자 정보 삭제
@@ -63,6 +72,11 @@ const Admin = () => {
       password: "",
       departmentName: "",
     });
+  };
+
+  // 사이드바 탭 변경 핸들러
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
   };
 
   //컴포넌트가 처음 마운트될때 직원 목록을 로드하는 useEffect 훅을 선언한다
@@ -94,13 +108,12 @@ const Admin = () => {
     fetchEmployees();
   }, []);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewEmployee((prev) => ({
       // 올바른 상태 업데이트 함수
       ...prev,
-      [name]: value,  // "name" 속성을 사용하여 어떤 상태 속성을 업데이트할지 결정
+      [name]: value, // "name" 속성을 사용하여 어떤 상태 속성을 업데이트할지 결정
     }));
   };
 
@@ -303,9 +316,207 @@ const Admin = () => {
     setDeleteConfirmId(null);
   };
 
+  // 섹션에 따른 컨텐츠 렌더링
+  const renderContent = () => {
+    switch (activeSection) {
+      case "employees":
+        return renderEmployeesSection();
+      case "departments":
+        return (
+          <div className="p-4">
+            <h2>부서 관리</h2>
+            <p>부서 관리 기능은 개발 중입니다.</p>
+          </div>
+        );
+      case "attendance":
+        return (
+          <div className="p-4">
+            <h2>근태 관리</h2>
+            <p>근태 관리 기능은 개발 중입니다.</p>
+          </div>
+        );
+      case "reports":
+        return (
+          <div className="p-4">
+            <h2>보고서</h2>
+            <p>보고서 기능은 개발 중입니다.</p>
+          </div>
+        );
+      case "settings":
+        return (
+          <div className="p-4">
+            <h2>설정</h2>
+            <p>설정 기능은 개발 중입니다.</p>
+          </div>
+        );
+      default:
+    }
+  };
+
+  // 페이지네이션 컴포넌트 추가
+  const PaginationComponent = ({
+    totalItems,
+    itemsPerPage,
+    currentPage,
+    onPageChange,
+  }) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // 많은 페이지가 있을 경우 페이지 범위를 제한
+    const pageRange = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
+    let endPage = Math.min(totalPages, startPage + pageRange - 1);
+
+    // 시작 페이지 조정
+    if (endPage - startPage + 1 < pageRange && startPage > 1) {
+      startPage = Math.max(1, endPage - pageRange + 1);
+    }
+
+    const pages = [];
+
+    // 첫 페이지로 이동 버튼
+    pages.push(
+      <Pagination.First
+        key="first"
+        onClick={() => onPageChange(1)}
+        disabled={currentPage === 1}
+      />
+    );
+
+    // 이전 페이지 버튼
+    pages.push(
+      <Pagination.Prev
+        key="prev"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      />
+    );
+
+    // 페이지 번호 버튼들
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <Pagination.Item
+          key={i}
+          active={i === currentPage}
+          onClick={() => onPageChange(i)}
+        >
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    // 다음 페이지 버튼
+    pages.push(
+      <Pagination.Next
+        key="next"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      />
+    );
+
+    // 마지막 페이지로 이동 버튼
+    pages.push(
+      <Pagination.Last
+        key="last"
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+      />
+    );
+
+    return <Pagination>{pages}</Pagination>;
+  };
+
+  // 직원 관리 섹션 렌더링
+  const renderEmployeesSection = () => {
+    // 현재 페이지에 표시할 데이터 계산
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentEmployees = employees.slice(indexOfFirstItem, indexOfLastItem);
+
+    // 페이지 변경 핸들러
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+
+    return (
+      <div className="p-4">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2>직원 관리</h2>
+          <Button variant="success" onClick={handleModalOpen}>
+            직원 등록
+          </Button>
+        </div>
+
+        {loading ? (
+          <p>데이터를 불러오는 중...</p>
+        ) : error ? (
+          <p>에러 발생: {error.message}</p>
+        ) : (
+          <>
+            <Table striped bordered hover responsive>
+              <thead className="bg-dark text-white">
+                <tr>
+                  <th>ID</th>
+                  <th>이름</th>
+                  <th>권한</th>
+                  <th>부서</th>
+                  <th>근태상태</th>
+                  <th>출근시간</th>
+                  <th style={{ width: "200px" }}>작업</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentEmployees.map((employee) => (
+                  <tr key={employee.id}>
+                    <td>{employee.id}</td>
+                    <td>{employee.username}</td>
+                    <td>
+                      {employee.authorityId === "1" ? "관리자" : "일반직원"}
+                    </td>
+                    <td>{employee.departmentName}</td>
+                    <td>{employee.timekepping}</td>
+                    <td>{employee.clockIn}</td>
+                    <td>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleEditModalOpen(employee)}
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteConfirm(employee.id, employee.username)
+                        }
+                      >
+                        삭제
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+
+            <div className="d-flex justify-content-center mt-4">
+              <PaginationComponent
+                totalItems={employees.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
-      {/* Admin 컴포넌트 return 문 최상단에 추가 */}
+      {/* 사이드바 추가로 네비게이션바는 더이상 안씀씀
       <Navbar bg="dark" variant="dark" className="mb-1 px-0">
         <Container fluid className="px-5">
           <Navbar.Brand className="ms-0 ps-2">
@@ -321,7 +532,13 @@ const Admin = () => {
             </Button>
           </Navbar.Collapse>
         </Container>
-      </Navbar>
+      </Navbar> */}
+      {/* 사이드바 */}
+      <Sidebar activeKey={activeSection} onSelect={handleSectionChange} />
+      메인 컨텐츠
+      <div style={{ marginLeft: "250px", width: "calc(100% - 250px)" }}>
+        {renderContent()}
+      </div>
       {/* 직원 등록 버튼
       <Button
         variant={showRegistrationForm ? "danger" : "success"}
@@ -330,12 +547,10 @@ const Admin = () => {
       >
         {showRegistrationForm ? "취소" : "직원 등록"}
       </Button> */}
-
       {/* // 새 코드 */}
       <Button variant="success" onClick={handleModalOpen} className="mb-3">
         직원 등록
       </Button>
-
       {/* 이전 직원 등록 폼
       {showRegistrationForm && (
         <Card className="mb-4">
@@ -408,7 +623,6 @@ const Admin = () => {
           </Card.Body>
         </Card>
       )} */}
-
       {/* 직원 등록 모달 */}
       <Modal show={showModal} onHide={handleModalClose} size="lg">
         <Modal.Header closeButton>
@@ -472,7 +686,6 @@ const Admin = () => {
                 required
               />
             </Form.Group>
-            
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -484,7 +697,6 @@ const Admin = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
       {/* 기존 직원 수정 폼
       {editMode && (
         <Card className="mb-4">
@@ -560,7 +772,6 @@ const Admin = () => {
           </Card.Body>
         </Card>
       )} */}
-
       {/* 직원 수정 모달 */}
       <Modal show={showEditModal} onHide={handleEditModalClose} size="lg">
         <Modal.Header closeButton>
@@ -635,87 +846,7 @@ const Admin = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>이름</th>
-            <th>권한</th>
-            <th>부서</th>
-            <th>근태상태</th>
-            <th>출근시간</th>
-            <th>작업</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((employee) => {
-            console.log("직원map형태", employee);
-            return (
-              <tr key={employee.id}>
-                <td>{employee.id}</td>
-                <td>{employee.username}</td>
-                <td>{employee.authorityId === "1" ? "관리자" : "일반직원"}</td>
-                <td>{employee.departmentName}</td>
-                <td>{employee.timekepping}</td>
-                <td>{employee.clockIn}</td>
-                <td>
-                  {/* 기존 수정 버튼 */}
-                  {/* <Button
-                    variant="primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleEditMode(employee)}
-                  >
-                    수정
-                  </Button> */}
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleEditModalOpen(employee)}
-                  >
-                    수정
-                  </Button>
-
-                  {deleteConfirmId === employee.id ? (
-                    <div>
-                      <span style={{ color: "red", marginRight: "10px" }}>
-                        정말 삭제하시겠습니까?
-                      </span>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => handleDelete(employee.id)}
-                      >
-                        예
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={handleCancelDelete}
-                      >
-                        아니오
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleDeleteConfirm(employee.id, employee.username)
-                      }
-                    >
-                      삭제
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      {/* 기존 테이블 코드는 지웠음 */}
     </div>
   );
 };
