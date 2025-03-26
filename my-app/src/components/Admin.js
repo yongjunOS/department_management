@@ -47,6 +47,10 @@ const Admin = () => {
   // 모달 직원수정 상태변수
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // 직원 상세 정보 모달 상태변수
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
   //페이징네이션 상태변수
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(2); // 페이지당 표시할 항목 수
@@ -72,6 +76,18 @@ const Admin = () => {
       password: "",
       departmentName: "",
     });
+  };
+
+  // 직원 상세 정보 모달 열기/닫기 핸들러
+  const handleDetailModalOpen = (employee) => {
+    setSelectedEmployee(employee);
+    setShowDetailModal(true);
+  };
+
+  // 직원 상세 정보 모달 열기/닫기 핸들러
+  const handleDetailModalClose = () => {
+    setShowDetailModal(false);
+    setSelectedEmployee(null);
   };
 
   // 사이드바 탭 변경 핸들러
@@ -467,7 +483,11 @@ const Admin = () => {
               </thead>
               <tbody>
                 {currentEmployees.map((employee) => (
-                  <tr key={employee.id}>
+                  <tr
+                    key={employee.id}
+                    onClick={() => handleDetailModalOpen(employee)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <td>{employee.id}</td>
                     <td>{employee.username}</td>
                     <td>
@@ -847,6 +867,72 @@ const Admin = () => {
         </Modal.Footer>
       </Modal>
       {/* 기존 테이블 코드는 지웠음 */}
+      {/* 직원 상세 정보 모달 */}
+      <Modal show={showDetailModal} onHide={handleDetailModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>직원 상세 정보</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedEmployee && (
+            <div>
+              <h5 className="mb-4 text-center">
+                {selectedEmployee.username} 님의 상세 정보
+              </h5>
+
+              <Table bordered>
+                <tbody>
+                  <tr>
+                    <th style={{ width: "30%" }}>ID</th>
+                    <td>{selectedEmployee.id}</td>
+                  </tr>
+                  <tr>
+                    <th>이름</th>
+                    <td>{selectedEmployee.username}</td>
+                  </tr>
+                  <tr>
+                    <th>권한</th>
+                    <td>
+                      {selectedEmployee.authorityId === "1"
+                        ? "관리자"
+                        : "일반직원"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>부서</th>
+                    <td>{selectedEmployee.departmentName}</td>
+                  </tr>
+                  <tr>
+                    <th>근태상태</th>
+                    <td>{selectedEmployee.timekepping || "기록 없음"}</td>
+                  </tr>
+                  <tr>
+                    <th>출근시간</th>
+                    <td>{selectedEmployee.clockIn || "기록 없음"}</td>
+                  </tr>
+                  <tr>
+                    <th>퇴근시간</th>
+                    <td>{selectedEmployee.clockOut || "기록 없음"}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleDetailModalClose();
+              handleEditModalOpen(selectedEmployee);
+            }}
+          >
+            정보 수정
+          </Button>
+          <Button variant="secondary" onClick={handleDetailModalClose}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
