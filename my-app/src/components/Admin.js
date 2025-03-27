@@ -52,8 +52,8 @@ const Admin = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   //페이징네이션 상태변수
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2); // 페이지당 표시할 항목 수
+  const [currentPage, setCurrentPage] = useState(1); //현재 페이지 위치 설정
+  const [itemsPerPage] = useState(5); // 페이지당 표시할 항목 수
 
   // Admin 컴포넌트 내부에서 이 함수 추가
   const handleLogout = () => {
@@ -501,16 +501,20 @@ const Admin = () => {
                         variant="primary"
                         size="sm"
                         className="me-2"
-                        onClick={() => handleEditModalOpen(employee)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // 이벤트가 행으로 전파되는 것을 막음
+                          handleEditModalOpen(employee);
+                        }}
                       >
                         수정
                       </Button>
                       <Button
                         variant="danger"
                         size="sm"
-                        onClick={() =>
-                          handleDeleteConfirm(employee.id, employee.username)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation(); // 삭제 버튼에도 전파 중지 추가
+                          handleDeleteConfirm(employee.id, employee.username);
+                        }}
                       >
                         삭제
                       </Button>
